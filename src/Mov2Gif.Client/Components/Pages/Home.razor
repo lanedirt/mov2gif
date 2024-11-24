@@ -7,7 +7,9 @@
 <PageTitle>MOV to GIF Converter</PageTitle>
 
 <div class="max-w-3xl mx-auto">
-    <h1 class="text-3xl font-bold mb-8 text-center">MOV to GIF Converter</h1>
+    <h1 class="text-3xl font-bold mb-8 text-center">
+        <span @onclick="ReloadPage" class="hover:text-blue-500 transition-colors cursor-pointer">MOV to GIF Converter</span>
+    </h1>
 
     <div class="mb-8">
         <InputFile OnChange="@HandleFileSelected"
@@ -84,6 +86,18 @@
                     <span class="text-sm text-gray-500">@_frameRate fps</span>
                 </div>
 
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Resolution</label>
+                    <input type="range"
+                           min="240"
+                           max="1080"
+                           step="120"
+                           @bind="_resolution"
+                           @bind:event="oninput"
+                           class="w-full" />
+                    <span class="text-sm text-gray-500">@_resolution px</span>
+                </div>
+
                 <button @onclick="ReconvertWithOptions"
                         class="w-full bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600">
                     Apply Changes
@@ -103,6 +117,7 @@
     private bool _isDragging;
     private string? _inputFileSize;
     private string? _outputFileSize;
+    private int _resolution = 480;
 
     private InputFile inputFile;
     private ElementReference fileDropContainer;
@@ -165,7 +180,7 @@
         {
             using var stream = _currentFile.OpenReadStream(maxAllowedSize: 100_000_000); // 100MB max
             var converter = new MovToGifConverter();
-            var convertedStream = await converter.ConvertToGif(stream, _frameRate, _quality);
+            var convertedStream = await converter.ConvertToGif(stream, _frameRate, _quality, _resolution);
 
             // Convert the Stream to MemoryStream
             _outputGifStream = new MemoryStream();
@@ -210,6 +225,7 @@
         _currentFile = null;
         _quality = 50;
         _frameRate = 30;
+        _resolution = 480;
         _inputFileSize = null;
         _outputFileSize = null;
         StateHasChanged();
@@ -223,7 +239,11 @@
 
     private async Task OpenFileInput()
     {
-        await JSRuntime.InvokeVoidAsync("document.getElementById('fileInput').click");
+        if (inputFile.Element.HasValue)
+        {
+            await inputFile.Element.Value.FocusAsync();
+            await JSRuntime.InvokeVoidAsync("click", inputFile.Element.Value);
+        }
     }
 
     public async ValueTask DisposeAsync()
@@ -256,5 +276,10 @@
         }
 
         return $"{size:0.##} {sizes[order]}";
+    }
+
+    private async Task ReloadPage()
+    {
+        await JSRuntime.InvokeVoidAsync("location.reload");
     }
 }

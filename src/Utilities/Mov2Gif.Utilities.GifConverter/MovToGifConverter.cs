@@ -5,7 +5,7 @@ namespace Mov2Gif.Utilities.GifConverter;
 
 public class MovToGifConverter
 {
-    public async Task<Stream> ConvertToGif(Stream movStream, int frameRate = 30, int quality = 85)
+    public async Task<Stream> ConvertToGif(Stream movStream, int frameRate = 30, int quality = 85, int maxResolution = 480)
     {
         // Create a temporary file for the input MOV
         var tempInputPath = Path.GetTempFileName() + ".mov";
@@ -23,7 +23,7 @@ public class MovToGifConverter
             var mediaInfo = await FFProbe.AnalyseAsync(tempInputPath);
             var width = mediaInfo.VideoStreams.First().Width;
             var height = mediaInfo.VideoStreams.First().Height;
-            var maxDimension = 480d; // Max width or height
+            var maxDimension = (double)maxResolution;
 
             var scale = Math.Min(maxDimension / width, maxDimension / height);
             var newWidth = (int)(width * scale);

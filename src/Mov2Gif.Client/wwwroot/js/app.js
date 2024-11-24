@@ -29,3 +29,7 @@ window.getDroppedFiles = async function (dataTransfer) {
 window.preventDefaultDragOver = function (event) {
     event.preventDefault();
 };
+
+window.click = function(element) {
+    element.click();
+};
