@@ -6,6 +6,10 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Utilities", "Utilities", "{
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Mov2Gif.Utilities.GifConverter", "src\Utilities\Mov2Gif.Utilities.GifConverter\Mov2Gif.Utilities.GifConverter.csproj", "{CFDACD81-87D1-479C-81AC-3D88F77F11FB}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{24D60423-7D97-445F-9744-254BAC145007}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Mov2Gif.IntegrationTests", "src\Tests\Mov2Gif.IntegrationTests\Mov2Gif.IntegrationTests.csproj", "{B5003337-963A-4365-A5FB-BD084680F9B4}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -20,8 +24,13 @@ Global
 		{CFDACD81-87D1-479C-81AC-3D88F77F11FB}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{CFDACD81-87D1-479C-81AC-3D88F77F11FB}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{CFDACD81-87D1-479C-81AC-3D88F77F11FB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B5003337-963A-4365-A5FB-BD084680F9B4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B5003337-963A-4365-A5FB-BD084680F9B4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B5003337-963A-4365-A5FB-BD084680F9B4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B5003337-963A-4365-A5FB-BD084680F9B4}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{CFDACD81-87D1-479C-81AC-3D88F77F11FB} = {F5654E7B-167A-49B8-8284-27BB44F92A9B}
+		{B5003337-963A-4365-A5FB-BD084680F9B4} = {24D60423-7D97-445F-9744-254BAC145007}
 	EndGlobalSection
 EndGlobal
