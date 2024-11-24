@@ -1,0 +1,11 @@
+services:
+  mov2gif-client:
+    build:
+      context: .
+      dockerfile: src/Mov2Gif.Client/Dockerfile
+    ports:
+      - "3100:80"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Production
+      - ASPNETCORE_URLS=http://+:80
+    restart: unless-stopped
