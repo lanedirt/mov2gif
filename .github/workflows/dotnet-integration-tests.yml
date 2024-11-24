@@ -18,4 +18,4 @@ jobs:
       run: docker build -t mov2gif-client -f src/Mov2Gif.Client/Dockerfile .
 
     - name: Run integration tests
-      run: docker run --rm mov2gif-client dotnet test src/Tests/Mov2Gif.IntegrationTests --no-build --verbosity normal
+      run: docker run --rm --entrypoint "dotnet" mov2gif-client test src/Tests/Mov2Gif.IntegrationTests --verbosity normal
