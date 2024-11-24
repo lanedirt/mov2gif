@@ -1,0 +1,188 @@
+﻿@page "/"
+@using System.IO
+@inject IJSRuntime JSRuntime
+
+<PageTitle>MOV to GIF Converter</PageTitle>
+
+<div class="max-w-3xl mx-auto">
+    <h1 class="text-3xl font-bold mb-8 text-center">MOV to GIF Converter</h1>
+
+    <div class="mb-8">
+        <InputFile OnChange="@HandleFileSelected"
+                  class="hidden"
+                  accept=".mov"
+                  id="fileInput" />
+
+        <div @ondragover:preventDefault
+             @ondrop:preventDefault
+             @ondrop="@HandleDrop"
+             class="border-2 border-dashed border-gray-300 rounded-lg p-12 text-center hover:border-blue-500 transition-colors cursor-pointer"
+             onclick="document.getElementById('fileInput').click()">
+            @if (_isConverting)
+            {
+                <div class="flex flex-col items-center">
+                    <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500 mb-4"></div>
+                    <p>Converting...</p>
+                </div>
+            }
+            else if (_outputGifStream != null)
+            {
+                <img src="@_outputGifUrl" alt="Converted GIF" class="max-w-full mb-4" />
+                <div class="flex gap-4 justify-center">
+                    <button @onclick="DownloadGif" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">
+                        Download GIF
+                    </button>
+                    <button @onclick="Reset" class="bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-600">
+                        Convert Another
+                    </button>
+                </div>
+            }
+            else
+            {
+                <div>
+                    <svg class="mx-auto h-12 w-12 text-gray-400 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
+                    </svg>
+                    <p class="text-lg mb-2">Drag and drop your .MOV file here</p>
+                    <p class="text-sm text-gray-500">or click to select</p>
+                </div>
+            }
+        </div>
+    </div>
+
+    @if (_outputGifStream != null && !_isConverting)
+    {
+        <div class="bg-white rounded-lg shadow p-6">
+            <h2 class="text-xl font-semibold mb-4">Optimize Output</h2>
+
+            <div class="space-y-4">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Quality</label>
+                    <input type="range"
+                           min="1"
+                           max="100"
+                           @bind="_quality"
+                           @bind:event="oninput"
+                           class="w-full" />
+                    <span class="text-sm text-gray-500">@_quality%</span>
+                </div>
+
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Frame Rate</label>
+                    <input type="range"
+                           min="10"
+                           max="60"
+                           @bind="_frameRate"
+                           @bind:event="oninput"
+                           class="w-full" />
+                    <span class="text-sm text-gray-500">@_frameRate fps</span>
+                </div>
+
+                <button @onclick="ReconvertWithOptions"
+                        class="w-full bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600">
+                    Apply Changes
+                </button>
+            </div>
+        </div>
+    }
+</div>
+
+@code {
+    private bool _isConverting;
+    private string? _outputGifUrl;
+    private MemoryStream? _outputGifStream;
+    private int _quality = 85;
+    private int _frameRate = 30;
+    private IBrowserFile? _currentFile;
+
+    private async Task HandleFileSelected(InputFileChangeEventArgs e)
+    {
+        await ProcessFile(e.File);
+    }
+
+    private async Task HandleDrop(DragEventArgs e)
+    {
+        var files = await JSRuntime.InvokeAsync<IEnumerable<IBrowserFile>>("getDroppedFiles", e.DataTransfer);
+        var file = files.FirstOrDefault();
+        if (file != null)
+        {
+            await ProcessFile(file);
+        }
+    }
+
+    private async Task ProcessFile(IBrowserFile file)
+    {
+        if (!file.ContentType.Contains("quicktime"))
+        {
+            await JSRuntime.InvokeVoidAsync("alert", "Please select a .MOV file");
+            return;
+        }
+
+        _currentFile = file;
+        await ConvertToGif();
+    }
+
+    private async Task ConvertToGif()
+    {
+        if (_currentFile == null) return;
+
+        _isConverting = true;
+        StateHasChanged();
+
+        try
+        {
+            // Read the file into memory
+            using var sourceStream = _currentFile.OpenReadStream(maxAllowedSize: 100_000_000); // 100MB max
+            using var memoryStream = new MemoryStream();
+            await sourceStream.CopyToAsync(memoryStream);
+            memoryStream.Position = 0;
+
+            // TODO: Implement the actual MOV to GIF conversion here using a library like FFMpeg.NET
+            // For now, we'll just create a dummy GIF
+            _outputGifStream = new MemoryStream();
+            await memoryStream.CopyToAsync(_outputGifStream);
+            _outputGifStream.Position = 0;
+
+            // Convert the stream to a data URL for display
+            var bytes = _outputGifStream.ToArray();
+            _outputGifUrl = $"data:image/gif;base64,{Convert.ToBase64String(bytes)}";
+        }
+        finally
+        {
+            _isConverting = false;
+            StateHasChanged();
+        }
+    }
+
+    private async Task ReconvertWithOptions()
+    {
+        await ConvertToGif();
+    }
+
+    private async Task DownloadGif()
+    {
+        if (_outputGifStream != null)
+        {
+            var bytes = _outputGifStream.ToArray();
+            var base64 = Convert.ToBase64String(bytes);
+            await JSRuntime.InvokeVoidAsync("downloadFile", $"data:image/gif;base64,{base64}");
+            StateHasChanged();
+        }
+    }
+
+    private void Reset()
+    {
+        _outputGifUrl = null;
+        _outputGifStream?.Dispose();
+        _outputGifStream = null;
+        _currentFile = null;
+        _quality = 85;
+        _frameRate = 30;
+        StateHasChanged();
+    }
+
+    public void Dispose()
+    {
+        _outputGifStream?.Dispose();
+    }
+}
