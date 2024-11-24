@@ -2,6 +2,10 @@
 Microsoft Visual Studio Solution File, Format Version 12.00
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Mov2Gif.Client", "src\Mov2Gif.Client\Mov2Gif.Client.csproj", "{B96218FB-F03A-45F0-BB39-73AE1D73005A}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Utilities", "Utilities", "{F5654E7B-167A-49B8-8284-27BB44F92A9B}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Mov2Gif.Utilities.GifConverter", "Mov2Gif.Utilities.GifConverter\Mov2Gif.Utilities.GifConverter.csproj", "{CFDACD81-87D1-479C-81AC-3D88F77F11FB}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -12,5 +16,12 @@ Global
 		{B96218FB-F03A-45F0-BB39-73AE1D73005A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B96218FB-F03A-45F0-BB39-73AE1D73005A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B96218FB-F03A-45F0-BB39-73AE1D73005A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CFDACD81-87D1-479C-81AC-3D88F77F11FB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CFDACD81-87D1-479C-81AC-3D88F77F11FB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CFDACD81-87D1-479C-81AC-3D88F77F11FB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CFDACD81-87D1-479C-81AC-3D88F77F11FB}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{CFDACD81-87D1-479C-81AC-3D88F77F11FB} = {F5654E7B-167A-49B8-8284-27BB44F92A9B}
 	EndGlobalSection
 EndGlobal

@@ -1,6 +1,7 @@
 ﻿@page "/"
 @rendermode InteractiveServer
 @using System.IO
+@using Mov2Gif.Utilities.GifConverter
 @inject IJSRuntime JSRuntime
 
 <PageTitle>MOV to GIF Converter</PageTitle>
@@ -154,13 +155,18 @@
 
         try
         {
-            // Simulate conversion time
-            await Task.Delay(2000);
+            using var stream = _currentFile.OpenReadStream(maxAllowedSize: 100_000_000); // 100MB max
+            var converter = new MovToGifConverter();
+            var convertedStream = await converter.ConvertToGif(stream, _frameRate, _quality);
 
-            // For testing UI, create a dummy GIF data URL
-            // This is a tiny 1x1 transparent GIF
-            _outputGifUrl = "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7";
+            // Convert the Stream to MemoryStream
             _outputGifStream = new MemoryStream();
+            await convertedStream.CopyToAsync(_outputGifStream);
+            _outputGifStream.Position = 0;
+
+            var buffer = new byte[_outputGifStream.Length];
+            await _outputGifStream.ReadAsync(buffer);
+            _outputGifUrl = $"data:image/gif;base64,{Convert.ToBase64String(buffer)}";
         }
         finally
         {
