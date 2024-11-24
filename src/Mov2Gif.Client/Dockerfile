@@ -26,6 +26,11 @@ RUN apt-get update && \
     rm -rf /var/lib/apt/lists/*
 
 COPY --from=build /app/publish .
+
+# Set ASP.NET Core environment variables
+ENV ASPNETCORE_URLS=http://+:80
+ENV ASPNETCORE_ENVIRONMENT=Production
+
 EXPOSE 80
 
 ENTRYPOINT ["dotnet", "Mov2Gif.Client.dll"]
