@@ -1,48 +1,44 @@
-export function initializeFileDropZone(dropZoneElement, inputFile) {
-    // Add a class when the user drags a file over the drop zone
-    function onDragHover(e) {
-        e.preventDefault();
-        dropZoneElement.classList.add("hover");
-    }
+export function initializeFileDropZone(dropZoneElement, inputElement, dotnetHelper) {
+    // Prevent default drag behaviors
+    ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+        dropZoneElement.addEventListener(eventName, preventDefaults, false);
+        document.body.addEventListener(eventName, preventDefaults, false);
+    });
 
-    function onDragLeave(e) {
-        e.preventDefault();
-        dropZoneElement.classList.remove("hover");
-    }
+    // Handle drag enter/leave
+    dropZoneElement.addEventListener('dragenter', () => {
+        dotnetHelper.invokeMethodAsync('OnDragEnter');
+    });
 
-    // Handle the paste and drop events
-    function onDrop(e) {
-        e.preventDefault();
-        dropZoneElement.classList.remove("hover");
+    dropZoneElement.addEventListener('dragleave', (e) => {
+        // Only trigger if actually leaving the container (not entering a child element)
+        if (e.target === dropZoneElement) {
+            dotnetHelper.invokeMethodAsync('OnDragLeave');
+        }
+    });
 
-        // Set the files property of the input element and raise the change event
-        inputFile.files = e.dataTransfer.files;
+    // Handle drops
+    dropZoneElement.addEventListener('drop', e => {
+        dotnetHelper.invokeMethodAsync('OnDragLeave');
+        const dt = e.dataTransfer;
+        const files = dt.files;
+        inputElement.files = files;
+
         const event = new Event('change', { bubbles: true });
-        inputFile.dispatchEvent(event);
+        inputElement.dispatchEvent(event);
+    });
+
+    function preventDefaults(e) {
+        e.preventDefault();
+        e.stopPropagation();
     }
 
-    function onPaste(e) {
-        // Set the files property of the input element and raise the change event
-        inputFile.files = e.clipboardData.files;
-        const event = new Event('change', { bubbles: true });
-        inputFile.dispatchEvent(event);
-    }
-
-    // Register all events
-    dropZoneElement.addEventListener("dragenter", onDragHover);
-    dropZoneElement.addEventListener("dragover", onDragHover);
-    dropZoneElement.addEventListener("dragleave", onDragLeave);
-    dropZoneElement.addEventListener("drop", onDrop);
-    dropZoneElement.addEventListener('paste', onPaste);
-
-    // The returned object allows to unregister the events when the Blazor component is destroyed
     return {
         dispose: () => {
-            dropZoneElement.removeEventListener('dragenter', onDragHover);
-            dropZoneElement.removeEventListener('dragover', onDragHover);
-            dropZoneElement.removeEventListener('dragleave', onDragLeave);
-            dropZoneElement.removeEventListener("drop", onDrop);
-            dropZoneElement.removeEventListener('paste', onPaste);
+            ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+                dropZoneElement.removeEventListener(eventName, preventDefaults);
+                document.body.removeEventListener(eventName, preventDefaults);
+            });
         }
-    }
+    };
 }

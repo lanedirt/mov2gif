@@ -16,7 +16,7 @@
                   id="fileInput" />
 
         <div @ref="fileDropContainer"
-             class="border-2 border-dashed border-gray-300 rounded-lg p-12 text-center hover:border-blue-500 transition-colors cursor-pointer"
+             class="border-2 border-dashed @(_isDragging ? "border-blue-500 bg-blue-100 shadow-lg scale-102" : "border-gray-300") rounded-lg p-12 text-center hover:border-blue-500 transition-all cursor-pointer"
              onclick="document.getElementById('fileInput').click()">
             @if (_isConverting)
             {
@@ -94,22 +94,38 @@
     private int _quality = 85;
     private int _frameRate = 30;
     private IBrowserFile? _currentFile;
+    private bool _isDragging;
 
     private InputFile inputFile;
     private ElementReference fileDropContainer;
     private IJSObjectReference _module;
     private IJSObjectReference _dropZoneInstance;
+    private DotNetObjectReference<Home>? _objectReference;
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         if (firstRender)
         {
+            _objectReference = DotNetObjectReference.Create(this);
             _module = await JSRuntime.InvokeAsync<IJSObjectReference>("import", "./js/dropZone.js");
             _dropZoneInstance = await _module.InvokeAsync<IJSObjectReference>(
                 "initializeFileDropZone",
                 fileDropContainer,
-                inputFile.Element);
+                inputFile.Element,
+                _objectReference);
         }
+    }
+
+    [JSInvokable]
+    public void OnDragEnter()
+    {
+        SetDragging(true);
+    }
+
+    [JSInvokable]
+    public void OnDragLeave()
+    {
+        SetDragging(false);
     }
 
     private async Task HandleFileSelected(InputFileChangeEventArgs e)
@@ -180,6 +196,12 @@
         StateHasChanged();
     }
 
+    private void SetDragging(bool isDragging)
+    {
+        _isDragging = isDragging;
+        StateHasChanged();
+    }
+
     public async ValueTask DisposeAsync()
     {
         if (_dropZoneInstance != null)
@@ -193,6 +215,7 @@
             await _module.DisposeAsync();
         }
 
+        _objectReference?.Dispose();
         _outputGifStream?.Dispose();
     }
 }
