@@ -1,0 +1,23 @@
+# This workflow will test if running the integration tests works.
+name: .NET Integration Tests
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  test:
+    timeout-minutes: 60
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Build and run tests in Docker
+      run: |
+        # Build the client Docker image which includes FFmpeg
+        docker build -t mov2gif-client -f src/Mov2Gif.Client/Dockerfile .
+
+        # Run the integration tests using the same image
+        docker run --rm mov2gif-client dotnet test src/Tests/Mov2Gif.IntegrationTests --no-build --verbosity normal
