@@ -1,4 +1,5 @@
 ﻿@page "/"
+@rendermode InteractiveServer
 @using System.IO
 @inject IJSRuntime JSRuntime
 
@@ -131,21 +132,13 @@
 
         try
         {
-            // Read the file into memory
-            using var sourceStream = _currentFile.OpenReadStream(maxAllowedSize: 100_000_000); // 100MB max
-            using var memoryStream = new MemoryStream();
-            await sourceStream.CopyToAsync(memoryStream);
-            memoryStream.Position = 0;
+            // Simulate conversion time
+            await Task.Delay(2000);
 
-            // TODO: Implement the actual MOV to GIF conversion here using a library like FFMpeg.NET
-            // For now, we'll just create a dummy GIF
+            // For testing UI, create a dummy GIF data URL
+            // This is a tiny 1x1 transparent GIF
+            _outputGifUrl = "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7";
             _outputGifStream = new MemoryStream();
-            await memoryStream.CopyToAsync(_outputGifStream);
-            _outputGifStream.Position = 0;
-
-            // Convert the stream to a data URL for display
-            var bytes = _outputGifStream.ToArray();
-            _outputGifUrl = $"data:image/gif;base64,{Convert.ToBase64String(bytes)}";
         }
         finally
         {

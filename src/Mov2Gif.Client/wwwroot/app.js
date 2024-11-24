@@ -8,6 +8,12 @@ window.downloadFile = function (url) {
 };
 
 window.getDroppedFiles = function (dataTransfer) {
-    const files = dataTransfer.files;
-    return files;
+    return Array.from(dataTransfer.files).map(file => {
+        return {
+            name: file.name,
+            size: file.size,
+            type: file.type,
+            lastModified: file.lastModified
+        };
+    });
 };
