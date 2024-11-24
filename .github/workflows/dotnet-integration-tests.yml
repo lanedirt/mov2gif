@@ -14,10 +14,8 @@ jobs:
     steps:
     - uses: actions/checkout@v4
 
-    - name: Build and run tests in Docker
-      run: |
-        # Build the client Docker image which includes FFmpeg
-        docker build -t mov2gif-client -f src/Mov2Gif.Client/Dockerfile .
+    - name: Build Docker image
+      run: docker build -t mov2gif-client -f src/Mov2Gif.Client/Dockerfile .
 
-        # Run the integration tests using the same image
-        docker run --rm mov2gif-client dotnet test src/Tests/Mov2Gif.IntegrationTests --no-build --verbosity normal
+    - name: Run integration tests
+      run: docker run --rm mov2gif-client dotnet test src/Tests/Mov2Gif.IntegrationTests --no-build --verbosity normal
