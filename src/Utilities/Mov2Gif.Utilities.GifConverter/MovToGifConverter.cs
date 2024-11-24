@@ -33,14 +33,16 @@ public class MovToGifConverter
             newWidth = newWidth + (newWidth % 2);
             newHeight = newHeight + (newHeight % 2);
 
-            // Convert to GIF using FFmpeg
+            // Convert quality (0-100) to number of colors (2-256)
+            var colors = Math.Max(2, Math.Min(256, (int)(quality * 2.56)));
+
+            // Convert to GIF using FFmpeg with better quality control
             await FFMpegArguments
                 .FromFileInput(tempInputPath)
                 .OutputToFile(tempOutputPath, false, options => options
-                    .WithCustomArgument($"-vf \"scale={newWidth}:{newHeight},split[s0][s1];[s0]palettegen[p];[s1][p]paletteuse\"")
+                    .WithCustomArgument($"-vf \"scale={newWidth}:{newHeight},split[s0][s1];[s0]palettegen=max_colors={colors}:stats_mode=full[p];[s1][p]paletteuse=dither=floyd_steinberg:diff_mode=rectangle\"")
                     .WithFramerate(frameRate)
                     .WithVideoCodec("gif")
-                    .WithCustomArgument($"-quality {quality}")
                 )
                 .ProcessAsynchronously();
 

@@ -1,7 +1,8 @@
-window.downloadFile = function (url) {
+window.downloadFile = function (url, originalFileName) {
+    const filename = 'mov2gif_' + originalFileName + '.gif';
     const a = document.createElement('a');
     a.href = url;
-    a.download = 'converted.gif';
+    a.download = filename;
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);
