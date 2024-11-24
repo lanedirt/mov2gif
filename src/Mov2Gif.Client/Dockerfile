@@ -19,6 +19,8 @@ RUN dotnet publish "Mov2Gif.Client/Mov2Gif.Client.csproj" -c Release -o /app/pub
 FROM mcr.microsoft.com/dotnet/aspnet:9.0 AS final
 WORKDIR /app
 
+# Install FFmpeg. This is also done in the Mov2Gif.IntegrationTests Dockerfile.
+# When changing this, also make sure to update the Dockerfile in the integration tests project.
 RUN apt-get update && \
     apt-get install -y ffmpeg && \
     rm -rf /var/lib/apt/lists/*
