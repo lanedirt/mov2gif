@@ -3,11 +3,11 @@
 <h1>mov2gif</h1>
 
 <p align="center">
-<a href="https://mov2gif.lanedirt.com">Live demo 🔥</a>
+<a href="https://mov2gif.lanedirt.com">Live demo 🔥</a> • <a href="#installation">Installation ⚙️</a>
 </p>
 
 <h3 align="center">
-Convert .mov to .gif via simple Web UI
+Convert .mov to .gif using a simple web UI
 </h3>
 
 [<img src="https://img.shields.io/github/actions/workflow/status/lanedirt/mov2gif/dotnet-integration-tests.yml?label=integration tests">](https://github.com/lanedirt/mov2gif/actions/workflows/dotnet-integration-tests.yml)
@@ -17,11 +17,15 @@ Convert .mov to .gif via simple Web UI
 mov2gif is an open-source .mov to .gif converter built with C# ASP.NET technology. It provides a simple web interface to convert your .mov files to .gif format with customizable settings like quality, frame rate, and resolution.
 
 ## Live demo
-A live demo of the app is available at [mov2gif.lanedirt.com](https://mov2gif.lanedirt.com)
+![mov2gif_Screen Recording 2024-11-24 at 18 24 12](https://github.com/user-attachments/assets/5f2212cf-b55d-4105-a6f5-703c739b2da8)
+
+(This .gif is made with this tool)
+
+You can try out the app yourself at [mov2gif.lanedirt.com](https://mov2gif.lanedirt.com)
 
 ## Installation
 
-The easiest way to run mov2gif is using Docker. The container includes all required dependencies (including FFmpeg).
+The easiest way to run mov2gif is using Docker. You can run it on your local machine or deploy it to a server. The container includes all required dependencies (including FFmpeg). No extra installations or plugins required.
 
 ```bash
 docker run -d -p 3100:80 ghcr.io/lanedirt/mov2gif:latest
