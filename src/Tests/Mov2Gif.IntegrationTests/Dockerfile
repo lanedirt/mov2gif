@@ -10,7 +10,8 @@ RUN dotnet restore "Tests/Mov2Gif.IntegrationTests/Mov2Gif.IntegrationTests.cspr
 COPY ["src/Tests/Mov2Gif.IntegrationTests/", "Tests/Mov2Gif.IntegrationTests/"]
 COPY ["src/Utilities/Mov2Gif.Utilities.GifConverter/", "Utilities/Mov2Gif.Utilities.GifConverter/"]
 
-# Install FFmpeg
+# Install FFmpeg. This is also done in the Mov2Gif.Client Dockerfile.
+# When changing this, also make sure to update the Dockerfile in the client project.
 RUN apt-get update && \
     apt-get install -y ffmpeg && \
     rm -rf /var/lib/apt/lists/*
