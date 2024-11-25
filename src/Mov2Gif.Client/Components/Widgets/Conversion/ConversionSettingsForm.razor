@@ -1,0 +1,94 @@
+<div class="bg-white rounded-lg shadow p-6">
+    <h2 class="text-xl font-semibold mb-4 text-center">Optimize Output</h2>
+
+    <div class="space-y-4">
+        <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">Quality</label>
+            <input type="range"
+                   min="5"
+                   max="100"
+                   value="@Quality"
+                   @oninput="OnQualityChanged"
+                   class="w-full" />
+            <span class="text-sm text-gray-500">@Quality%</span>
+        </div>
+
+        <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">Frame Rate</label>
+            <input type="range"
+                   min="5"
+                   max="50"
+                   value="@FrameRate"
+                   @oninput="OnFrameRateChanged"
+                   class="w-full" />
+            <span class="text-sm text-gray-500">@FrameRate fps</span>
+        </div>
+
+        <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">Resolution</label>
+            <input type="range"
+                   min="240"
+                   max="1080"
+                   step="120"
+                   value="@Resolution"
+                   @oninput="OnResolutionChanged"
+                   class="w-full" />
+            <span class="text-sm text-gray-500">@Resolution px</span>
+        </div>
+
+        <button @onclick="ReconvertWithOptions"
+                class="w-full bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600">
+            Apply Changes
+        </button>
+    </div>
+</div>
+
+@code {
+    [Parameter]
+    public int Quality { get; set; }
+
+    [Parameter]
+    public EventCallback<int> QualityChanged { get; set; }
+
+    [Parameter]
+    public int FrameRate { get; set; }
+
+    [Parameter]
+    public EventCallback<int> FrameRateChanged { get; set; }
+
+    [Parameter]
+    public int Resolution { get; set; }
+
+    [Parameter]
+    public EventCallback<int> ResolutionChanged { get; set; }
+
+    [Parameter]
+    public EventCallback ReconvertWithOptions { get; set; }
+
+    private async Task OnQualityChanged(ChangeEventArgs e)
+    {
+        if (int.TryParse(e.Value?.ToString(), out int value))
+        {
+            Quality = value;
+            await QualityChanged.InvokeAsync(value);
+        }
+    }
+
+    private async Task OnFrameRateChanged(ChangeEventArgs e)
+    {
+        if (int.TryParse(e.Value?.ToString(), out int value))
+        {
+            FrameRate = value;
+            await FrameRateChanged.InvokeAsync(value);
+        }
+    }
+
+    private async Task OnResolutionChanged(ChangeEventArgs e)
+    {
+        if (int.TryParse(e.Value?.ToString(), out int value))
+        {
+            Resolution = value;
+            await ResolutionChanged.InvokeAsync(value);
+        }
+    }
+}
