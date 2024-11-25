@@ -1,0 +1,32 @@
+<div class="flex flex-col items-center">
+    <img src="@OutputGifUrl" alt="Converted GIF" class="max-w-full mb-4 mx-auto" />
+    <div class="text-sm text-gray-500 mb-4 text-center">
+        Input: @InputFileSize → Output: @OutputFileSize
+    </div>
+    <div class="flex gap-4 justify-center">
+        <button @onclick="DownloadGifClicked" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">
+            Download GIF
+        </button>
+        <button @onclick="ResetClicked" class="bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-600">
+            Convert Another
+        </button>
+    </div>
+</div>
+
+@code {
+
+    [Parameter]
+    public string? OutputGifUrl { get; set; }
+    
+    [Parameter]
+    public string? InputFileSize { get; set; }
+    
+    [Parameter]
+    public string? OutputFileSize { get; set; }
+    
+    [Parameter]
+    public EventCallback DownloadGifClicked { get; set; }
+    
+    [Parameter]
+    public EventCallback ResetClicked { get; set; }
+}
