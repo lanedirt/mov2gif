@@ -3,6 +3,7 @@ services:
     build:
       context: .
       dockerfile: src/Mov2Gif.Client/Dockerfile
+    image: ghcr.io/lanedirt/mov2gif:latest
     ports:
       - "3100:80"
     environment:
